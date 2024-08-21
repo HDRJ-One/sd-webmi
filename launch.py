@@ -82,47 +82,25 @@ def check_run_python(code):
     return check_run(f'"{python}" -c "{code}"')
 
 
-def run(command, success_message=None, error_message=None):
-    """Executes a shell command and handles success and error messages."""
-    try:
-        result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
-        if success_message:
-            print(success_message)
-        return result.stdout
-    except subprocess.CalledProcessError as e:
-        if error_message:
-            print(f"{error_message}\n{e.stderr}")
-        raise
-
 def git_clone(url, dir, name, commithash=None):
-    """Clones a git repository into a specified directory and checks out a commit if provided."""
-    git = "git"  # Adjust this if git is located in a different path
+    # TODO clone into temporary dir and move if successful
 
     if os.path.exists(dir):
         if commithash is None:
-            print(f"Directory {dir} already exists. Skipping clone.")
             return
-        
-        # Check the current commit hash
-        current_hash = run(f'{git} -C "{dir}" rev-parse HEAD', f"Determined current hash for {name}.", 
-                           f"Couldn't determine {name}'s hash").strip()
 
+        current_hash = run(f'"{git}" -C {dir} rev-parse HEAD', None, f"Couldn't determine {name}'s hash: {commithash}").strip()
         if current_hash == commithash:
-            print(f"{name} is already at commit {commithash}.")
             return
-        
-        # Fetch updates and checkout the specified commit
-        run(f'{git} -C "{dir}" fetch', f"Fetched updates for {name}.", f"Couldn't fetch updates for {name}")
-        run(f'{git} -C "{dir}" checkout {commithash}', f"Checked out commit {commithash} for {name}.", 
-            f"Couldn't checkout commit {commithash} for {name}")
+
+        run(f'"{git}" -C {dir} fetch', f"Fetching updates for {name}...", f"Couldn't fetch {name}")
+        run(f'"{git}" -C {dir} checkout {commithash}', f"Checking out commit for {name} with hash: {commithash}...", f"Couldn't checkout commit {commithash} for {name}")
         return
 
-    # Clone the repository if the directory does not exist
-    run(f'{git} clone "{url}" "{dir}"', f"Cloned {name} into {dir}.", f"Couldn't clone {name}")
+    run(f'"{git}" clone "{url}" "{dir}"', f"Cloning {name} into {dir}...", f"Couldn't clone {name}")
 
     if commithash is not None:
-        # Checkout the specified commit if provided
-        run(f'{git} -C "{dir}" checkout {commithash}', None, f"Couldn't checkout {name}'s commit {commithash}")
+        run(f'"{git}" -C {dir} checkout {commithash}', None, "Couldn't checkout {name}'s hash: {commithash}")
 
         
 def version_check(commit):
