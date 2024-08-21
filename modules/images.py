@@ -13,7 +13,6 @@ import numpy as np
 import piexif
 import piexif.helper
 from PIL import Image, ImageFont, ImageDraw, PngImagePlugin
-from fonts.ttf import Roboto
 import string
 import json
 
@@ -138,9 +137,11 @@ def draw_grid_annotations(im, width, height, hor_texts, ver_texts):
 
     def get_font(fontsize):
         try:
-            return ImageFont.truetype(opts.font or Roboto, fontsize)
+            # Try to load the specified font if provided
+            return ImageFont.truetype(opts.font, fontsize)
         except Exception:
-            return ImageFont.truetype(Roboto, fontsize)
+            # Fallback to a commonly available system font
+            return ImageFont.load_default()  # This uses a default bitmap font provided by PIL
 
     def draw_texts(drawing, draw_x, draw_y, lines, initial_fnt, initial_fontsize):
         for i, line in enumerate(lines):
