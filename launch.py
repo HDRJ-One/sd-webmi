@@ -251,7 +251,7 @@ def prepare_environment():
     git_clone(k_diffusion_repo, repo_dir('k-diffusion'), "K-diffusion")
     run_pip(f"install -e {repo_dir('k-diffusion')}", "k-diffusion")
     git_clone(codeformer_repo, repo_dir('CodeFormer'), "CodeFormer")
-    run_pip(f"install -e {repo_dir('CodeFormer')}/basicsr", "basicsr")
+    #run_pip(f"install -e {repo_dir('CodeFormer')}/basicsr", "basicsr")
     git_clone(blip_repo, repo_dir('BLIP'), "BLIP")
     run_pip(f"install -e {repo_dir('BLIP')}", "BLIP")
 
