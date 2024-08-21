@@ -82,47 +82,47 @@ def check_run_python(code):
     return check_run(f'"{python}" -c "{code}"')
 
 
-def run_git(dir, name, command, desc=None, errdesc=None, custom_env=None, live: bool = default_command_live, autofix=True):
+def run(command, success_message=None, error_message=None):
+    """Executes a shell command and handles success and error messages."""
     try:
-        return run(f'"{git}" -C "{dir}" {command}', desc=desc, errdesc=errdesc, custom_env=custom_env, live=live)
-    except RuntimeError:
-        if not autofix:
-            raise
-
-    print(f"{errdesc}, attempting autofix...")
-    git_fix_workspace(dir, name)
-
-    return run(f'"{git}" -C "{dir}" {command}', desc=desc, errdesc=errdesc, custom_env=custom_env, live=live)
-
+        result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
+        if success_message:
+            print(success_message)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        if error_message:
+            print(f"{error_message}\n{e.stderr}")
+        raise
 
 def git_clone(url, dir, name, commithash=None):
-    # TODO clone into temporary dir and move if successful
+    """Clones a git repository into a specified directory and checks out a commit if provided."""
+    git = "git"  # Adjust this if git is located in a different path
 
     if os.path.exists(dir):
         if commithash is None:
+            print(f"Directory {dir} already exists. Skipping clone.")
             return
+        
+        # Check the current commit hash
+        current_hash = run(f'{git} -C "{dir}" rev-parse HEAD', f"Determined current hash for {name}.", 
+                           f"Couldn't determine {name}'s hash").strip()
 
-        current_hash = run_git(dir, name, 'rev-parse HEAD', None, f"Couldn't determine {name}'s hash: {commithash}", live=False).strip()
         if current_hash == commithash:
+            print(f"{name} is already at commit {commithash}.")
             return
-
-        if run_git(dir, name, 'config --get remote.origin.url', None, f"Couldn't determine {name}'s origin URL", live=False).strip() != url:
-            run_git(dir, name, f'remote set-url origin "{url}"', None, f"Failed to set {name}'s origin URL", live=False)
-
-        run_git(dir, name, 'fetch', f"Fetching updates for {name}...", f"Couldn't fetch {name}", autofix=False)
-
-        run_git(dir, name, f'checkout {commithash}', f"Checking out commit for {name} with hash: {commithash}...", f"Couldn't checkout commit {commithash} for {name}", live=True)
-
+        
+        # Fetch updates and checkout the specified commit
+        run(f'{git} -C "{dir}" fetch', f"Fetched updates for {name}.", f"Couldn't fetch updates for {name}")
+        run(f'{git} -C "{dir}" checkout {commithash}', f"Checked out commit {commithash} for {name}.", 
+            f"Couldn't checkout commit {commithash} for {name}")
         return
 
-    try:
-        run(f'"{git}" clone --config core.filemode=false "{url}" "{dir}"', f"Cloning {name} into {dir}...", f"Couldn't clone {name}", live=True)
-    except RuntimeError:
-        shutil.rmtree(dir, ignore_errors=True)
-        raise
+    # Clone the repository if the directory does not exist
+    run(f'{git} clone "{url}" "{dir}"', f"Cloned {name} into {dir}.", f"Couldn't clone {name}")
 
     if commithash is not None:
-        run(f'"{git}" -C "{dir}" checkout {commithash}', None, "Couldn't checkout {name}'s hash: {commithash}")
+        # Checkout the specified commit if provided
+        run(f'{git} -C "{dir}" checkout {commithash}', None, f"Couldn't checkout {name}'s commit {commithash}")
 
         
 def version_check(commit):
