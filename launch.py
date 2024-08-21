@@ -243,7 +243,7 @@ def prepare_environment():
     git_clone(stable_diffusion_repo, repo_dir('stable-diffusion-stability-ai'), "Stable Diffusion")
     git_clone(stable_diffusion_xl_repo, repo_dir('stable-diffusion-stability-ai/generative-models'), "Stable Diffusion XL")
     #git_clone(stable_diffusion_repo, repo_dir('stable-diffusion-stability-ai'), "Stable Diffusion", stable_diffusion_commit_hash)
-    run_pip(f"install -e {repo_dir('stable-diffusion-webui-assets')}", "stable-diffusion-stability-ai")
+    #run_pip(f"install -e {repo_dir('stable-diffusion-webui-assets')}", "stable-diffusion-webui-assets")
     run_pip(f"install -e {repo_dir('stable-diffusion-stability-ai')}", "stable-diffusion-stability-ai")
     run_pip(f"install -e {repo_dir('stable-diffusion-stability-ai/generative-models')}", "generative-models")
     git_clone(taming_transformers_repo, repo_dir('taming-transformers'), "Taming Transformers")
