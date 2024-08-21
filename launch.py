@@ -238,7 +238,7 @@ def prepare_environment():
     if not is_installed("pyngrok") and ngrok:
         run_pip("install pyngrok", "ngrok")
 
-    os.makedirs(dir_repos, exist_ok=True)
+    #os.makedirs(dir_repos, exist_ok=True)
     git_clone(assets_repo, repo_dir('stable-diffusion-webui-assets'), "assets", assets_commit_hash)
     git_clone(stable_diffusion_repo, repo_dir('stable-diffusion-stability-ai'), "Stable Diffusion", stable_diffusion_commit_hash)
     git_clone(stable_diffusion_xl_repo, repo_dir('generative-models'), "Stable Diffusion XL", stable_diffusion_xl_commit_hash)
