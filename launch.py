@@ -235,15 +235,15 @@ def prepare_environment():
 
     os.makedirs(dir_repos, exist_ok=True)
 
-    #git_clone(stable_diffusion_repo, repo_dir('stable-diffusion-stability-ai'), "Stable Diffusion", stable_diffusion_commit_hash)
-    #run_pip(f"install -e {repo_dir('stable-diffusion-stability-ai')}", "stable-diffusion-stability-ai")
-    #git_clone(taming_transformers_repo, repo_dir('taming-transformers'), "Taming Transformers", taming_transformers_commit_hash)
-    #run_pip(f"install -e {repo_dir('taming-transformers')}", "taming-transformers")
-    #git_clone(k_diffusion_repo, repo_dir('k-diffusion'), "K-diffusion", k_diffusion_commit_hash)
-    #run_pip(f"install -e {repo_dir('k-diffusion')}", "k-diffusion")
-    #git_clone(codeformer_repo, repo_dir('CodeFormer'), "CodeFormer", codeformer_commit_hash)
+    git_clone(stable_diffusion_repo, repo_dir('stable-diffusion-stability-ai'), "Stable Diffusion", stable_diffusion_commit_hash)
+    run_pip(f"install -e {repo_dir('stable-diffusion-stability-ai')}", "stable-diffusion-stability-ai")
+    git_clone(taming_transformers_repo, repo_dir('taming-transformers'), "Taming Transformers", taming_transformers_commit_hash)
+    run_pip(f"install -e {repo_dir('taming-transformers')}", "taming-transformers")
+    git_clone(k_diffusion_repo, repo_dir('k-diffusion'), "K-diffusion", k_diffusion_commit_hash)
+    run_pip(f"install -e {repo_dir('k-diffusion')}", "k-diffusion")
+    git_clone(codeformer_repo, repo_dir('CodeFormer'), "CodeFormer", codeformer_commit_hash)
     #run_pip(f"install -e {repo_dir('CodeFormer')}/basicsr", "basicsr")
-    #git_clone(blip_repo, repo_dir('BLIP'), "BLIP", blip_commit_hash)
+    git_clone(blip_repo, repo_dir('BLIP'), "BLIP", blip_commit_hash)
     #run_pip(f"install -e {repo_dir('BLIP')}", "BLIP")
 
     print("Current working directory:", os.getcwd())
